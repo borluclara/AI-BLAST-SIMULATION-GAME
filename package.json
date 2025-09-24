@@ -1,44 +1,30 @@
 {
-  "name": "ai-blast-simulation-game",
+  "name": "mineral-blasting-simulator",
   "version": "1.0.0",
-  "description": "A 2D blast simulation game built with React and JavaScript",
-  "main": "src/index.js",
+  "description": "A mineral blasting simulation game built with React and Vite",
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "dev": "react-scripts start",
-    "preview": "serve -s build"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "keywords": [
     "game",
     "simulation",
     "blast",
-    "2d",
+    "mining",
+    "mineral",
     "react",
-    "javascript"
+    "vite"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "^5.0.1"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "serve": "^14.2.0"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "@vitejs/plugin-react": "^4.0.3",
+    "vite": "^4.4.5"
   }
 }
