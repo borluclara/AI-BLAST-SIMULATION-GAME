@@ -1,6 +1,7 @@
 
-import React from 'react'
-import './App.css'
+import React from 'react';
+import './App.css';
+import UploadCSV from './uploadcsv.jsx';
 
 function App() {
   return (
@@ -31,13 +32,18 @@ function App() {
             <button className="reset-btn">Reset</button>
           </div>
         </main>
+
+         {/*CSV Upload Section*/}
+        <section className="upload-section">
+          <UploadCSV />
+        </section>
         
         <footer className="footer">
           <p>Advanced Mining Technology Simulation Platform</p>
         </footer>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
