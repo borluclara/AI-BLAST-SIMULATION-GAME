@@ -1,6 +1,7 @@
 
 import React from 'react'
 import './App.css'
+import GridManager from './components/GridManager'
 
 function App() {
   return (
@@ -9,27 +10,13 @@ function App() {
         <header className="header">
           <div className="logo">
             <span className="blast-icon">💥</span>
-            <h1>WELCOME TO OUR MINERAL BLASTING SIMULATOR</h1>
+            <h1>MINERAL BLASTING SIMULATOR</h1>
           </div>
-          <p className="subtitle">Experience realistic mining blast simulations</p>
+          <p className="subtitle">Experience realistic mining blast simulations with 2D ore visualization</p>
         </header>
         
         <main className="main-content">
-          <div className="simulation-area">
-            <div className="blast-zone">
-              <div className="rock-layer layer-1"></div>
-              <div className="rock-layer layer-2"></div>
-              <div className="rock-layer layer-3"></div>
-              <div className="explosion-point">
-                <span className="explosion">💥</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="controls">
-            <button className="start-btn">Start Simulation</button>
-            <button className="reset-btn">Reset</button>
-          </div>
+          <GridManager />
         </main>
         
         <footer className="footer">
