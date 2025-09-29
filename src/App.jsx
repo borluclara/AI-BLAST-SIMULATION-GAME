@@ -1,47 +1,39 @@
-
-import React from 'react';
-import './App.css';
-import UploadCSV from './uploadcsv.jsx';
+import React, { useState } from "react";
+import UploadCSV from "./uploadcsv.jsx";
+import CSVErrorUI from "./csvErrorUI.jsx";
+import "./App.css";
+import "./csvErrorUI.css";
 
 function App() {
-  return (
-    <div className="app">
-      <div className="container">
-        <header className="header">
-          <div className="logo">
-            <span className="blast-icon">💥</span>
-            <h1>WELCOME TO OUR MINERAL BLASTING SIMULATOR</h1>
-          </div>
-          <p className="subtitle">Experience realistic mining blast simulations</p>
-        </header>
-        
-        <main className="main-content">
-          <div className="simulation-area">
-            <div className="blast-zone">
-              <div className="rock-layer layer-1"></div>
-              <div className="rock-layer layer-2"></div>
-              <div className="rock-layer layer-3"></div>
-              <div className="explosion-point">
-                <span className="explosion">💥</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="controls">
-            <button className="start-btn">Start Simulation</button>
-            <button className="reset-btn">Reset</button>
-          </div>
-        </main>
+  const [hasError, setHasError] = useState(true); // force error ON for testing
 
-         {/*CSV Upload Section*/}
-        <section className="upload-section">
-          <UploadCSV />
-        </section>
-        
-        <footer className="footer">
-          <p>Advanced Mining Technology Simulation Platform</p>
-        </footer>
-      </div>
+  return (
+    <div className="app-container">
+      {hasError ? (
+        <CSVErrorUI onRetry={() => setHasError(false)} />
+      ) : (
+        <>
+          <header className="header">
+            <h1 className="main-title">WELCOME TO OUR MINERAL BLASTING SIMULATOR</h1>
+            <p className="subtitle">Advanced Mining Technology Simulation Platform</p>
+          </header>
+
+          <main className="main-content">
+            <div className="simulation-area"> {/* Game Area */} </div>
+            <div className="controls">
+              <button className="start-btn">Start Simulation</button>
+              <button className="reset-btn">Reset</button>
+            </div>
+            <section className="upload-section">
+              <UploadCSV setHasError={setHasError} />
+            </section>
+          </main>
+
+          <footer className="footer">
+            <p>Advanced Mining Technology Simulation Platform</p>
+          </footer>
+        </>
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import Papa from "papaparse";
 
+// These are the required CSV headers
 const REQUIRED_HEADERS = [
   "x",
   "y",
@@ -12,33 +13,36 @@ const REQUIRED_HEADERS = [
   "blast_hole",
 ];
 
-export default function UploadCSV() {
-  const [error, setError] = useState("");
-
+export default function UploadCSV({ setHasError }) {
+  // Function to handle file upload
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
+
     if (!file) return;
 
-    // Check file extension
+    // ❌ If not a CSV file → show error UI
     if (!file.name.endsWith(".csv")) {
-      setError("❌ Wrong file format. Please upload a CSV file.");
+      console.error("❌ Wrong file format. Only CSV allowed.");
+      setHasError(true);
       return;
     }
 
+    // Parse CSV with PapaParse
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
         const headers = results.meta.fields;
 
-        // Validate headers
+        // Check headers
         const missing = REQUIRED_HEADERS.filter((h) => !headers.includes(h));
         if (missing.length > 0) {
-          setError(`❌ Missing required column(s): ${missing.join(", ")}`);
+          console.error("❌ Missing required headers:", missing);
+          setHasError(true);
           return;
         }
 
-        // Validate rows
+        // Check rows for missing values
         const invalidRows = results.data.filter(
           (row) =>
             !row.x ||
@@ -50,29 +54,28 @@ export default function UploadCSV() {
             !row.game_value ||
             !row.blast_hole
         );
+
         if (invalidRows.length > 0) {
-          setError("❌ Some rows are invalid or incomplete.");
+          console.error("❌ Some rows are invalid or incomplete:", invalidRows);
+          setHasError(true);
           return;
         }
 
-        // If all good
-        setError(""); 
-        console.log("✅ Parsed CSV Data:", results.data);
+        // ✅ CSV is valid
+        console.log("✅ Valid CSV parsed:", results.data);
+        setHasError(false); // Stay in normal layout
       },
-      error: () => {
-        setError("❌ Error reading CSV file.");
+      error: (err) => {
+        console.error("❌ Error parsing CSV:", err);
+        setHasError(true);
       },
     });
   };
 
   return (
-    <div>
-      <p>
-        Need help? Download a{" "}
-        <a href="/blast_scenario_sample.csv" download>
-          sample CSV format
-        </a>
-      </p>
+    <div className="upload-container">
+      <h3>Upload Blast Scenario CSV</h3>
+      <input type="file" accept=".csv" onChange={handleFileUpload} />
     </div>
   );
 }
