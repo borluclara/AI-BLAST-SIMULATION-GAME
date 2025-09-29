@@ -149,10 +149,10 @@ const OreGridCanvas = ({
   }
 
   return (
-    <div className="ore-grid-container">
+    <div className="relative w-full h-full bg-gray-900 rounded-lg overflow-hidden">
       <canvas
         ref={canvasRef}
-        className="ore-grid-canvas"
+        className="w-full h-full cursor-pointer"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
@@ -164,12 +164,15 @@ const OreGridCanvas = ({
       
       {/* Block info tooltip */}
       {hoveredBlock && (
-        <div className="block-info-tooltip">
-          <strong>{hoveredBlock.oreType}</strong><br/>
-          Position: ({hoveredBlock.x}, {hoveredBlock.y})<br/>
-          Health: {hoveredBlock.health}/{hoveredBlock.maxHealth}<br/>
-          Value: {hoveredBlock.value}<br/>
-          {hoveredBlock.isDestroyed && <span className="destroyed">DESTROYED</span>}
+        <div className="absolute pointer-events-none z-10 bg-black/80 text-white text-xs px-2 py-1 rounded border border-white/20">
+          <div className="font-medium">{hoveredBlock.oreType}</div>
+          <div className="text-white/80">
+            Position: ({hoveredBlock.x}, {hoveredBlock.y})
+          </div>
+          <div className="text-white/80">
+            Health: {hoveredBlock.health}/{hoveredBlock.maxHealth} | Value: {hoveredBlock.value}
+          </div>
+          {hoveredBlock.isDestroyed && <span className="text-red-400 font-medium">DESTROYED</span>}
         </div>
       )}
     </div>

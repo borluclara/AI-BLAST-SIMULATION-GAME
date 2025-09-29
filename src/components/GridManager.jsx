@@ -27,6 +27,7 @@ const GridManager = () => {
   const [showLabels, setShowLabels] = useState(false);
   const [blastRadius, setBlastRadius] = useState(2);
   const [blastPower, setBlastPower] = useState(50);
+  const [blastDirection, setBlastDirection] = useState(90);
 
   // Handle file upload
   const handleFileUpload = (event) => {
@@ -58,168 +59,153 @@ const GridManager = () => {
   };
 
   return (
-    <div className="grid-manager">
-      <div className="grid-manager-header">
-        <h2>Ore Grid Visualizer</h2>
-        
-        <div className="grid-actions">
-          <input
-            type="file"
-            accept=".csv"
-            onChange={handleFileUpload}
-            id="csv-upload"
-            className="csv-upload-input"
-          />
-          <label htmlFor="csv-upload" className="csv-upload-btn">
-            Load CSV File
-          </label>
-          
-          <button onClick={loadSampleData} className="sample-btn">
-            Load Sample Data
-          </button>
-          
-          {isReady && (
-            <button onClick={resetGrid} className="reset-btn">
-              Reset Grid
-            </button>
-          )}
+    <>
+      {/* Score and Status Cards */}
+      <div className="grid grid-cols-2 gap-4 px-4">
+        <div className="rounded-lg border border-white/20 dark:border-white/20 bg-primary/10 dark:bg-primary/20 p-4">
+          <p className="text-sm font-medium text-white/80 dark:text-white/80">Score</p>
+          <p className="text-2xl font-bold text-white dark:text-white">{gridStats.totalBlocks * 100}</p>
+        </div>
+        <div className="rounded-lg border border-white/20 dark:border-white/20 bg-primary/10 dark:bg-primary/20 p-4">
+          <p className="text-sm font-medium text-white/80 dark:text-white/80">Status</p>
+          <p className="text-2xl font-bold text-white dark:text-white">{loading ? 'Loading' : isReady ? 'Ready' : 'Error'}</p>
         </div>
       </div>
 
       {loading && (
-        <div className="loading-state">
+        <div className="flex items-center justify-center py-8">
           <div className="loading-spinner"></div>
-          <p>Loading grid data...</p>
+          <p className="ml-4 text-white/80">Loading grid data...</p>
         </div>
       )}
 
       {error && (
-        <div className="error-state">
-          <p>Error: {error}</p>
-          <button onClick={loadSampleData}>Try Sample Data</button>
+        <div className="mx-4 p-4 bg-red-500/20 border border-red-500/40 rounded-lg">
+          <p className="text-white">Error: {error}</p>
+          <button onClick={loadSampleData} className="mt-2 px-4 py-2 bg-primary text-background-dark rounded font-medium">
+            Try Sample Data
+          </button>
         </div>
       )}
 
       {isReady && (
         <>
-          {/* Grid Statistics */}
-          <div className="grid-stats">
-            <div className="stat-item">
-              <span className="stat-value">{gridStats.totalBlocks}</span>
-              <span className="stat-label">Total Blocks</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{gridStats.destroyedBlocks}</span>
-              <span className="stat-label">Destroyed</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{gridStats.survivalRate}%</span>
-              <span className="stat-label">Survival Rate</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-value">{grid.width}×{grid.height}</span>
-              <span className="stat-label">Dimensions</span>
+          {/* Ore Zone Canvas */}
+          <div className="px-4 mt-6">
+            <h2 className="text-lg font-bold text-white dark:text-white mb-2">Ore Zone Canvas</h2>
+            <div className="aspect-[4/3] w-full rounded-lg overflow-hidden">
+              <OreGridCanvas
+                grid={grid}
+                onBlockClick={handleBlockClick}
+                cellSize={cellSize}
+                showGrid={showGrid}
+                showLabels={showLabels}
+              />
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="grid-controls">
-            <div className="control-group">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={showGrid}
-                  onChange={(e) => setShowGrid(e.target.checked)}
-                />
-                Show Grid Lines
-              </label>
-            </div>
-
-            <div className="control-group">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={showLabels}
-                  onChange={(e) => setShowLabels(e.target.checked)}
-                />
-                Show Ore Labels
-              </label>
-            </div>
-
-            <div className="control-group">
-              <label>
-                Cell Size: {cellSize}px
-                <input
-                  type="range"
-                  min="15"
-                  max="60"
-                  value={cellSize}
-                  onChange={(e) => setCellSize(parseInt(e.target.value))}
-                />
-              </label>
-            </div>
-
-            <div className="control-group">
-              <label>
-                Blast Radius: {blastRadius}
-                <input
-                  type="range"
-                  min="1"
-                  max="5"
-                  value={blastRadius}
-                  onChange={(e) => setBlastRadius(parseInt(e.target.value))}
-                />
-              </label>
-            </div>
-
-            <div className="control-group">
-              <label>
-                Blast Power: {blastPower}
-                <input
-                  type="range"
-                  min="10"
-                  max="200"
-                  value={blastPower}
-                  onChange={(e) => setBlastPower(parseInt(e.target.value))}
-                />
-              </label>
-            </div>
-          </div>
-
-          {/* Grid Canvas */}
-          <div className="grid-canvas-container">
-            <p className="grid-instructions">
-              Click on any ore block to apply a blast effect
-            </p>
-            
-            <OreGridCanvas
-              grid={grid}
-              onBlockClick={handleBlockClick}
-              cellSize={cellSize}
-              showGrid={showGrid}
-              showLabels={showLabels}
-            />
-          </div>
-
-          {/* Ore Distribution */}
-          <div className="ore-distribution">
-            <h3>Ore Distribution</h3>
-            <div className="ore-legend">
-              {Object.entries(gridStats.oreDistribution).map(([oreType, count]) => (
-                <div key={oreType} className="ore-legend-item">
-                  <div 
-                    className="ore-legend-color"
-                    style={{ backgroundColor: ORE_COLORS[oreType] || ORE_COLORS.default }}
-                  />
-                  <span className="ore-legend-name">{oreType}</span>
-                  <span className="ore-legend-count">({count})</span>
+          {/* Blast Tool Panel */}
+          <div className="px-4 mt-6">
+            <h2 className="text-lg font-bold text-white dark:text-white mb-2">Blast Tool Panel</h2>
+            <div className="space-y-4 rounded-lg border border-white/20 dark:border-white/20 bg-primary/10 dark:bg-primary/20 p-4">
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-base font-medium text-white dark:text-white">Power</label>
+                  <span className="text-sm font-normal text-white/80 dark:text-white/80">{blastPower}</span>
                 </div>
-              ))}
+                <div className="relative h-2 w-full rounded-full bg-white/20 dark:bg-white/20">
+                  <div 
+                    className="absolute h-2 rounded-full bg-primary"
+                    style={{ width: `${(blastPower / 200) * 100}%` }}
+                  ></div>
+                  <input
+                    type="range"
+                    min="10"
+                    max="200"
+                    value={blastPower}
+                    onChange={(e) => setBlastPower(parseInt(e.target.value))}
+                    className="absolute inset-0 w-full h-2 opacity-0 cursor-pointer"
+                  />
+                  <div 
+                    className="absolute -top-1 size-4 rounded-full bg-white border-2 border-primary cursor-pointer"
+                    style={{ left: `calc(${(blastPower / 200) * 100}% - 8px)` }}
+                  ></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-base font-medium text-white dark:text-white">Direction</label>
+                  <span className="text-sm font-normal text-white/80 dark:text-white/80">{blastDirection}°</span>
+                </div>
+                <div className="relative h-2 w-full rounded-full bg-white/20 dark:bg-white/20">
+                  <div 
+                    className="absolute h-2 rounded-full bg-primary"
+                    style={{ width: `${(blastDirection / 360) * 100}%` }}
+                  ></div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="360"
+                    value={blastDirection}
+                    onChange={(e) => setBlastDirection(parseInt(e.target.value))}
+                    className="absolute inset-0 w-full h-2 opacity-0 cursor-pointer"
+                  />
+                  <div 
+                    className="absolute -top-1 size-4 rounded-full bg-white border-2 border-primary cursor-pointer"
+                    style={{ left: `calc(${(blastDirection / 360) * 100}% - 8px)` }}
+                  ></div>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Action Buttons */}
+          <div className="px-4 mt-6 grid grid-cols-2 gap-3">
+            <button className="col-span-2 w-full h-12 flex items-center justify-center rounded-lg bg-primary text-background-dark font-bold text-sm tracking-wide">
+              Run Simulation
+            </button>
+            <button 
+              onClick={resetGrid}
+              className="w-full h-12 flex items-center justify-center rounded-lg bg-primary/20 dark:bg-primary/30 text-white font-bold text-sm tracking-wide"
+            >
+              Reset
+            </button>
+            <button className="w-full h-12 flex items-center justify-center rounded-lg bg-primary/20 dark:bg-primary/30 text-white font-bold text-sm tracking-wide">
+              Save
+            </button>
+            <button className="col-span-2 w-full h-12 flex items-center justify-center rounded-lg bg-primary/20 dark:bg-primary/30 text-white font-bold text-sm tracking-wide">
+              Replay
+            </button>
+          </div>
+
+          {/* Score & Feedback */}
+          <div className="px-4 mt-6">
+            <h2 className="text-lg font-bold text-white dark:text-white mb-2">Score & Feedback</h2>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-lg bg-primary/10 dark:bg-primary/20 p-4">
+                <p className="text-sm font-medium text-white/80 dark:text-white/80">Mineral Recovery</p>
+                <p className="text-2xl font-bold text-white dark:text-white">{gridStats.survivalRate}%</p>
+                <p className="text-base font-medium text-primary">+5%</p>
+              </div>
+              <div className="rounded-lg bg-primary/10 dark:bg-primary/20 p-4">
+                <p className="text-sm font-medium text-white/80 dark:text-white/80">Dilution</p>
+                <p className="text-2xl font-bold text-white dark:text-white">{100 - gridStats.survivalRate}%</p>
+                <p className="text-base font-medium text-red-500">-2%</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Hidden file upload for CSV loading */}
+          <input
+            type="file"
+            accept=".csv"
+            onChange={handleFileUpload}
+            id="csv-upload"
+            className="hidden"
+          />
         </>
       )}
-    </div>
+    </>
   );
 };
 

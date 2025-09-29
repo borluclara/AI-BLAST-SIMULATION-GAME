@@ -10,19 +10,20 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
   color: #ffffff;
-  background-color: #0f0f23;
+  background-color: #122017;
   overflow-x: hidden;
 }
 
 #root {
   min-height: 100vh;
+  width: 100%;
 }
 
 /* Utility Classes */
